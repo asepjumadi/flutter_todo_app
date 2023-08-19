@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo_app/constants/colors.dart';
-import 'package:flutter_todo_app/data/to_do_database.dart';
 import 'package:flutter_todo_app/models/todo.dart';
 import 'package:flutter_todo_app/widgets/todo_item.dart';
-import 'package:hive_flutter/adapters.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -14,17 +12,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final todolist = Todo.todoList();
-  final _myBox = Hive.box('myBox');
   final _todoController = TextEditingController();
-  ToDoDatabase db = new ToDoDatabase();
   List<Todo> _foundTodo = [];
 
   @override
   void initState() {
     _foundTodo = todolist;
-    if (_myBox.get("TODOLIST") != null) {
-      db.load();
-    }
     super.initState();
   }
 
@@ -140,20 +133,16 @@ class _HomeState extends State<Home> {
 
   void _addToDoItems(String toDo) {
     setState(() {
-      //   todolist.add(Todo(
-      //       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      //       todoText: toDo));
-      // });
-      db.tasks.add([toDo,false]);
+      todolist.add(Todo(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          todoText: toDo));
     });
-    db.update();
     _todoController.clear();
   }
 
   void _deleteToDoItem(String id) {
     setState(() {
-      // todolist.removeWhere((item) => item.id == id);
-      db.tasks.removeAt(int.parse(id));
+      todolist.removeWhere((item) => item.id == id);
     });
   }
 
